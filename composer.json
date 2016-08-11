@@ -1,0 +1,34 @@
+{
+    "name" : "Marcador-do/marcadordo-manager",
+    "description" : "Plugin for administration",
+    "type" : "wordpress-plugin",
+    "keywords" : [ "wordpress", "Plugin" ],
+    "license" : "GPL-2.0+",
+    "authors" : [
+        {
+            "name" : "Ronnie A. Baez Sesto",
+            "email" : "ronnie.baez@gmail.com",
+            "role" : "Backend Developer"
+        }
+    ],
+    "require" : {
+        "composer/installers" : "~1.0.0",
+        "php" : ">=5.2.4",
+        "mailgun/mailgun-php" : "^2.1",
+        "guzzlehttp/guzzle": "^6.2",
+        "php-http/curl-client": "^1.5",
+        "guzzlehttp/psr7": "^1.3",
+        "php-http/message": "^1.3"
+    },
+    "extra" : {
+        "installer-name" : "plugin-name"
+    },
+    "homepage" : "http://plugin-name.com",
+    "support": {
+        "issues": "https://github.com/Marcador-do/marcadordo-manager/issues",
+        "source": "https://github.com/Marcador-do/marcadordo-manager/"
+    },
+    "config": {
+        "vendor-dir":  "libraries"
+    }
+}
