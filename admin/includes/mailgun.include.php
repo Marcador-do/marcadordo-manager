@@ -19,7 +19,7 @@ $field->callback  = 'marcador_mailgun_key_setting_callback_function';
 marcador_add_settings_field( $section, $field );
 
 function marcador_mailgun_setting_section_callback_function() {
-  echo '<p>Set your MailGun key and domain.</p>';
+  echo '<p>Set your MailGun key and domain. For more information<a href="https://github.com/mailgun/mailgun-php">see the repo</a></p>';
 }
 
 function marcador_mailgun_domain_setting_callback_function() {
