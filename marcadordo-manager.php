@@ -14,17 +14,24 @@ License:     GPL2
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 */
 
+//Constants
 define("MARCADORDO_PLUGIN_BASE_PATH", plugin_dir_path(__FILE__));
-require_once( MARCADORDO_PLUGIN_BASE_PATH . 'libraries/autoload.php' );
-use Mailgun\Mailgun;
 
-/**
- * MarcadorDO Front.
- */
-if (!is_admin()) {
-  /**
-   * Hook that handels Contact and Work with Us
-   */
+//Global Required
+require_once( MARCADORDO_PLUGIN_BASE_PATH . 'libraries/autoload.php' );
+require_once( MARCADORDO_PLUGIN_BASE_PATH . 'includes/types/marcador_mail.post_type.php' );
+require_once( MARCADORDO_PLUGIN_BASE_PATH . 'includes/types/marcador_concurso.taxonomy.php' );
+require_once( MARCADORDO_PLUGIN_BASE_PATH . 'includes/types/marcador_concurso.post_type.php' );
+
+//MarcadorDO admin.
+if(is_admin()) {
+  include_once(MARCADORDO_PLUGIN_BASE_PATH . "admin/marcador-admin.php");
+}
+//MarcadorDO Front.
+elseif (!is_admin()) {
+  include_once(MARCADORDO_PLUGIN_BASE_PATH . "helpers/general.php");
+
+  //Hook that handels Contact and Work with Us
   add_action('marcador_form', 'marcadordo_form_generate_response');
   function marcadordo_form_generate_response() {
     global $response;
@@ -38,88 +45,47 @@ if (!is_admin()) {
     $message_sent    = "Thanks! Your message has been sent.";
      
     //user posted variables
-    $submitted   = $_POST['submitted'];
-    $name        = $_POST['message_name'];
-    $email       = $_POST['message_email'];
-    $phone       = $_POST['message_phone'];
-    $enterprise  = $_POST['message_enterprise'];
-    $message     = $_POST['message_text'];
-    $recapcha    = $_POST['g-recaptcha-response'];
+    $form         = new stdClass();
+    $email_to_option  = FALSE;
 
-    //php mailer variables
-    //$to       = get_option('admin_email');
-    //$subject  = "Someone sent a message from ".get_bloginfo('name');
-    //$headers  = 'From: '. $email . "\r\n" . 'Reply-To: ' . $email . "\r\n";
+    if (is_page('contacto')) {
+      $form->submitted    = $_POST['submitted'];
+      $form->name         = $_POST['message_name'];
+      $form->email        = $_POST['message_email'];
+      $form->phone        = $_POST['message_phone'];
+      $form->enterprise   = $_POST['message_enterprise'];
+      $form->asunto       = $_POST['message_asunto'];
+      $form->message      = $_POST['message_text'];
+      $form->recapcha     = $_POST['g-recaptcha-response'];
+      $email_to_option    = 'marcadordo_contact_form_email';
+      $validate_function  = 'validate_contact_form';
+    } elseif (is_page('trabaja-con-nosotros')) {
+      $form->submitted    = $_POST['submitted'];
+      $form->name         = $_POST['message_name'];
+      $form->email        = $_POST['message_email'];
+      $form->phone        = $_POST['message_phone'];
+      $form->message      = $_POST['message_text'];
+      $form->recapcha     = $_POST['g-recaptcha-response'];
+      $email_to_option    = 'marcadordo_workwithus_form_email';
+      $validate_function  = 'validate_workwithus_form';
+    } else { return; } // No other form is procesed yet
 
-
-    /*if ( $submitted ) {
-      if( TRUE != marcadordo_verify_recapcha( $recapcha ) ) {
-        $type = "error"; $message = $not_human;
-      } else {
-        $mailgun = new Mailgun(get_option('marcadordo_mailgun_key'));
-        $domain = get_option('marcadordo_mailgun_domain');
-        # Make the call to the client.
-        $result = $mailgun->sendMessage(
-          "$domain",
-          array(
-            'from'    => 'Mailgun Sandbox <postmaster@sandbox86bf3378ab684a5a8fa457e4337575a5.mailgun.org>',
-            'to'      => 'Ronnie A. Baez Sesto <ronnie.baez@gmail.com>',
-            'subject' => 'Hello Ronnie A. Baez Sesto',
-            'text'    => 'Congratulations Ronnie A. Baez Sesto, you just sent an email with Mailgun!  You are truly awesome!  You can see a record of this email in your logs: https://mailgun.com/cp/log .  You can send up to 300 emails/day from this sandbox server.  Next, you should add your own domain so you can send 10,000 emails/month for free.'));
-
-        $type = "success"; $message = $message_sent;
-      }
-
-      if ( $type == "success" )
-        $response = "<div class='success'>{$message}</div>";
-      else $response = "<div class='error'>{$message}</div>";
-    }*/
-      $response = "<div>
-      Submitted: {$submitted}, 
-      Name: {$name}, 
-      Email: {$email}, 
-      Phone: {$phone}, 
-      Enterprise: {$enterprise}, 
-      Message: {$message}, 
-      reCapcha: {$recapcha}
-      </div>";
-  }
-
-  function marcadordo_verify_recapcha($recaptcha) {
-    if (!empty($_SERVER['HTTP_CLIENT_IP'])) {
-        $ip = $_SERVER['HTTP_CLIENT_IP'];
-    } elseif (!empty($_SERVER['HTTP_X_FORWARDED_FOR'])) {
-        $ip = $_SERVER['HTTP_X_FORWARDED_FOR'];
-    } else {
-        $ip = $_SERVER['REMOTE_ADDR'];
+    if ( !$validate_function($form) ) {
+      $type = "error";
+      $response = "<div class=\"{$type}\">VALIDATION ERROR</div>";
+      return;
     }
 
-    $ch = curl_init();
-    curl_setopt($ch, CURLOPT_URL,"https://www.google.com/recaptcha/api/siteverify");
-    curl_setopt($ch, CURLOPT_POST, 1);
-    $payload = array(
-      'secret'    => get_option('marcadordo_recapcha_key'),
-      'response'  => $recaptcha,
-      'remoteip'  => $ip
-    );
-    curl_setopt($ch, CURLOPT_POSTFIELDS, http_build_query($payload));
-    // receive server response ...
-    curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
-    $server_output = json_decode( curl_exec ($ch) );
-    curl_close ($ch);
-
-    // further processing ....
-    if ($server_output->success == TRUE) {
-      return TRUE;
+    // Send Mail
+    if ( marcadordo_send_mail($email_to_option, $form) ) {
+      $type = "success"; $message = $message_sent;
+      // Save on Database
+      marcadordo_save_mail($form);
     } else { 
-      return FALSE;
+      $type = "error"; $message = $message_unsent;
     }
-  }
-}
 
-/**
- * MarcadorDO admin.
- */
-if(is_admin()) {
-  include_once(MARCADORDO_PLUGIN_BASE_PATH . "admin/marcador-admin.php");
+    // Response
+    $response = "<div class=\"{$type}\">{$message}</div>";
+  }
 }
