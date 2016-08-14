@@ -72,28 +72,29 @@ function marcadordo_send_mail($email_to_option, $form) {
     array('from'    => "Mailgun Marcador <postmaster@{$domain}>",
           'to'      => " <{$email_to}>",
           'subject' => '[MARCADOR] Formulario',
-          'text'    => "Name:\t{$form->name}\nEmail:\t{$form->email}\nTelefono:\t{$form->phone}\nCompañia:\t{$form->enterprise}\nAsunto:\t{$form->asunto}\nMensaje:\n{$form->message}\n"));
+          'html'    => "<strong>Name:</strong> {$form->name}<br /><strong>Email:</strong> {$form->email}<br /><strong>Telefono:</strong> {$form->phone}<br /><strong>Compañia:</strong> {$form->enterprise}<br /><strong>Asunto:</strong> {$form->asunto}<br /><strong>Mensaje:</strong><br />{$form->message}<br />",
+          'text'    => "Name:\t{$form->name}\n<strong>Email:</strong>\t{$form->email}\n<strong>Telefono:</strong>\t{$form->phone}\n<strong>Compañia:</strong>\t{$form->enterprise}\n<strong>Asunto:</strong>\t{$form->asunto}\n<strong>Mensaje:</strong>\n{$form->message}\n"));
 
-  // TODO: Check delivery response, asumed received.
-  return TRUE;
+  $response = $result->http_response_body;
+  if($response->message === 'Queued. Thank you.') return TRUE;
+  return FALSE;
 }
 
 function marcadordo_save_mail($form) {
-  $asunto = (!isset($form->asunto)) ? 'integrarse' : $form->asunto;
   $wp_error = FALSE;
   $postarr = array(
     'post_title'  => $form->name . " - " . $form->email,
     'post_type'   => 'marcador_mail_post',
     'tax_input'   => array( 
-      'marcador_mail_taxonomy' => $asunto,
+      'marcador_mail_taxonomy' => $form->asunto,
     ),
     'post_author' => 1,
-    'post_status'  => 'publish',
-    'meta_input' => array(
-      'marcador_mail_name' => $form->name,
-      'marcador_mail_email' => $form->email,
-      'marcador_mail_phone' => $form->phone,
-      'marcador_mail_asunto' => $asunto,
+    'post_status' => 'publish',
+    'meta_input'  => array(
+      'marcador_mail_name'     => $form->name,
+      'marcador_mail_email'    => $form->email,
+      'marcador_mail_phone'    => $form->phone,
+      'marcador_mail_asunto'   => $form->asunto,
     )
   );
   return wp_insert_post( $postarr, $wp_error );
