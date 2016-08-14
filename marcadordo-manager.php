@@ -64,8 +64,10 @@ elseif (!is_admin()) {
       $form->name         = $_POST['message_name'];
       $form->email        = $_POST['message_email'];
       $form->phone        = $_POST['message_phone'];
+      $form->enterprise   = 'N/A';
       $form->message      = $_POST['message_text'];
       $form->recapcha     = $_POST['g-recaptcha-response'];
+      $form->asunto       = 'integrarse';
       $email_to_option    = 'marcadordo_workwithus_form_email';
       $validate_function  = 'validate_workwithus_form';
     } else { return; } // No other form is procesed yet
