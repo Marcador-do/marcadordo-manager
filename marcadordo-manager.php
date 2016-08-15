@@ -79,7 +79,7 @@ elseif (!is_admin()) {
     }
 
     // Send Mail
-    if ( marcadordo_send_mail($email_to_option, $form) ) {
+    if ( marcadordo_send_mail($email_to_option, $form) === TRUE ) {
       $type = "success"; $message = $message_sent;
       // Save on Database
       marcadordo_save_mail($form);
