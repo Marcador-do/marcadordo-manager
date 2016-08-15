@@ -13,7 +13,7 @@
               name="marcador_mail_name" 
               class="marcador_mail_name_field" 
               placeholder="<?php echo esc_attr__( '', 'text_domain' ); ?>" 
-              value="<?php echo esc_attr__( $marcador_mail_name ); ?>" />
+              value="<?php echo esc_attr__( $mail_name ); ?>" />
     </td>
   </tr>
   <tr>
@@ -29,7 +29,7 @@
               name="marcador_mail_email" 
               class="marcador_mail_email_field" 
               placeholder="<?php echo esc_attr__( '', 'text_domain' ); ?>" 
-              value="<?php echo esc_attr__( $marcador_mail_email ); ?>" />
+              value="<?php echo esc_attr__( $mail_email ); ?>" />
     </td>
   </tr>
   <tr>
@@ -45,7 +45,7 @@
               name="marcador_mail_phone" 
               class="marcador_mail_phone_field" 
               placeholder="<?php echo esc_attr__( '', 'text_domain' ); ?>" 
-              value="<?php echo esc_attr__( $marcador_mail_phone ); ?>" />
+              value="<?php echo esc_attr__( $mail_phone ); ?>" />
     </td>
   </tr>
   <tr>
@@ -56,12 +56,12 @@
       </label>
     </th>
     <td>
-      <input  type="number" readonly 
+      <input  type="text" readonly 
               id="marcador_mail_asunto" 
               name="marcador_mail_asunto" 
               class="marcador_mail_asunto_field" 
               placeholder="<?php echo esc_attr__( '', 'text_domain' ); ?>" 
-              value="<?php echo esc_attr__( $marcador_mail_asunto ); ?>" />
+              value="<?php echo esc_attr__( $mail_asunto ); ?>" />
     </td>
   </tr>
 <?php /*  <tr>
