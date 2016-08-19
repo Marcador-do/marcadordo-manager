@@ -23,6 +23,8 @@ require_once( MARCADORDO_PLUGIN_BASE_PATH . 'includes/types/marcador_mail.post_t
 require_once( MARCADORDO_PLUGIN_BASE_PATH . 'includes/types/marcador_concurso.taxonomy.php' );
 require_once( MARCADORDO_PLUGIN_BASE_PATH . 'includes/types/marcador_concurso.post_type.php' );
 
+require_once( MARCADORDO_PLUGIN_BASE_PATH . 'ajax/ajax-marcador.php' );
+
 //MarcadorDO admin.
 if(is_admin()) {
   include_once(MARCADORDO_PLUGIN_BASE_PATH . "admin/marcador-admin.php");
