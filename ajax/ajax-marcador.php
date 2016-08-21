@@ -15,7 +15,7 @@ function cintillo_games_summary_callback($date = '2016.07.01') {
   if (file_exists(MARCADORDO_PLUGIN_BASE_PATH . 'storage/' . $filename)) {
     $json = file_get_contents(MARCADORDO_PLUGIN_BASE_PATH . 'storage/' . $filename);
     $obj = json_decode($json);
-    if( $not_expired = !((time() - $obj->last) >= 300) ) {
+    if( $not_expired = !((time() - $obj->last) >= 900) ) {
       header('Content-Type:application/json; charset=UTF-8');
       header("X-Marcador-Cached: json");
       echo $json;
@@ -34,9 +34,11 @@ function cintillo_games_summary_callback($date = '2016.07.01') {
     $response = array();
     $games = $body->league->games;
     foreach ($games as $game) {
+      // Builds Response Object
+      $status = $game->game->status;
       $current                = new stdClass;
       $current->game_id       = $game->game->id;
-      $current->status        = $game->game->status;
+      $current->status        = ("scheduled" != $status) ? $status : date('h:i a- D', strtotime($game->game->{$status}));
       $current->home          = new stdClass;
       $current->home->abbr    = $game->game->home->abbr;
       $current->home->runs    = $game->game->home->runs;
@@ -44,6 +46,9 @@ function cintillo_games_summary_callback($date = '2016.07.01') {
       $current->away->abbr    = $game->game->away->abbr;
       $current->away->runs    = $game->game->away->runs;
       array_push($response, $current);
+
+      // Crea borrador "Resumen" de partido
+      save_partido_post()
     }
     $body = array('cintillo' => $response, 'last' => time());
   } else {
@@ -56,4 +61,8 @@ function cintillo_games_summary_callback($date = '2016.07.01') {
   header('Content-Type:application/json; charset=UTF-8');
   echo $body_json;
   wp_die( );
+}
+
+function save_partido_post() {
+  // TODO
 }
