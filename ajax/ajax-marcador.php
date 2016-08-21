@@ -48,7 +48,7 @@ function cintillo_games_summary_callback($date = '2016.07.01') {
       array_push($response, $current);
 
       // Crea borrador "Resumen" de partido
-      save_partido_post()
+      save_partido_post();
     }
     $body = array('cintillo' => $response, 'last' => time());
   } else {
