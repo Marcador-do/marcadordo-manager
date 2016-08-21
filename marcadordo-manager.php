@@ -22,6 +22,8 @@ require_once( MARCADORDO_PLUGIN_BASE_PATH . 'libraries/autoload.php' );
 require_once( MARCADORDO_PLUGIN_BASE_PATH . 'includes/types/marcador_mail.post_type.php' );
 require_once( MARCADORDO_PLUGIN_BASE_PATH . 'includes/types/marcador_concurso.taxonomy.php' );
 require_once( MARCADORDO_PLUGIN_BASE_PATH . 'includes/types/marcador_concurso.post_type.php' );
+require_once( MARCADORDO_PLUGIN_BASE_PATH . 'includes/types/marcador_liga.post_type.php' );
+require_once( MARCADORDO_PLUGIN_BASE_PATH . 'includes/types/marcador_liga.taxonomy.php' );
 
 require_once( MARCADORDO_PLUGIN_BASE_PATH . 'ajax/ajax-marcador.php' );
 
