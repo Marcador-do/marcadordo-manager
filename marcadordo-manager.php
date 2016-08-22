@@ -16,6 +16,7 @@ License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
 //Constants
 define("MARCADORDO_PLUGIN_BASE_PATH", plugin_dir_path(__FILE__));
+date_default_timezone_set ( 'America/Santo_Domingo' );
 
 //Global Required
 require_once( MARCADORDO_PLUGIN_BASE_PATH . 'libraries/autoload.php' );
@@ -24,6 +25,7 @@ require_once( MARCADORDO_PLUGIN_BASE_PATH . 'includes/types/marcador_concurso.ta
 require_once( MARCADORDO_PLUGIN_BASE_PATH . 'includes/types/marcador_concurso.post_type.php' );
 require_once( MARCADORDO_PLUGIN_BASE_PATH . 'includes/types/marcador_liga.post_type.php' );
 require_once( MARCADORDO_PLUGIN_BASE_PATH . 'includes/types/marcador_liga.taxonomy.php' );
+require_once( MARCADORDO_PLUGIN_BASE_PATH . 'includes/types/marcador_partido.post_type.php' );
 
 require_once( MARCADORDO_PLUGIN_BASE_PATH . 'ajax/ajax-marcador.php' );
 
