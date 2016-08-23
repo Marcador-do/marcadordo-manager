@@ -48,7 +48,7 @@ function cintillo_games_summary_callback($date = '2016.07.01') {
       array_push($response, $current);
 
       // Crea borrador "Resumen" de partido
-      save_partido_post();
+      save_partido_post($game->game);
     }
     $body = array('cintillo' => $response, 'last' => time());
   } else {
@@ -63,6 +63,61 @@ function cintillo_games_summary_callback($date = '2016.07.01') {
   wp_die( );
 }
 
-function save_partido_post() {
-  // TODO
+function get_partidoId_from_gameId($gameId) {
+  $args = array(
+    'post_type'   => 'marcador_partido',
+    'meta_key'       => 'marcador_sp_game_id',
+    'meta_value'     => $gameId,
+    'meta_compare'   => '=',
+    'post_per_page'  => 1
+  );
+  
+  $query = new WP_Query( $args );
+  if ($query->post_count < 1) return 0;
+  $posts = $query->get_posts();
+  $post_id = $posts[0]->ID;
+  return $post_id;
+}
+
+function save_partido_post($game) {
+
+  $data               = new stdClass;
+  $data->home         = new stdClass;
+  $data->away         = new stdClass;
+  $data->date         = $game->scheduled;
+  $data->home->id     = $game->home->id;
+  $data->home->name   = $game->home->name;
+  $data->home->abbr   = $game->home->abbr;
+  $data->home->runs   = $game->home->runs;
+  $data->away->id     = $game->away->id;
+  $data->away->name   = $game->away->name;
+  $data->away->abbr   = $game->away->abbr;
+  $data->away->runs   = $game->away->runs;
+
+  $current_partido = get_partidoId_from_gameId($game->id);
+  $wp_error = FALSE;
+  if (0 === $current_partido) {
+    $postarr = array(
+      'post_id' => $current_partido,
+      'post_title'  => date('Y-m-d', strtotime($game->scheduled)) . " " . $game->home->name . " VS " .  $game->away->name,
+      'post_type'   => 'marcador_partido',
+      'post_author' => 1,
+      'post_status' => 'draft',
+      'meta_input'  => array(
+        'marcador_sp_game_id'       => $game->id,
+        'marcador_sp_game_data'     => json_encode($data),
+        'marcador_sp_game_status'   => $game->status,
+      )
+    );
+  } else {
+    $postarr = array(
+      'post_id' => $current_partido,
+      'post_type'   => 'marcador_partido',
+      'meta_input'  => array(
+        'marcador_sp_game_data'     => json_encode($data),
+      )
+    );
+  }
+
+  return wp_insert_post( $postarr, $wp_error );
 }

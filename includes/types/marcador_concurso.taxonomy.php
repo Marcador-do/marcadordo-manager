@@ -30,7 +30,7 @@ function marcador_concurso_taxonomy_function() {
         'public'                     => true,
         'show_ui'                    => true,
         'show_admin_column'          => true,
-        'show_in_nav_menus'          => true,
+        'show_in_nav_menus'          => false,
         'show_tagcloud'              => true,
         //'update_count_callback'      => 'marcador_mail_taxonomy_count_function',
     );
