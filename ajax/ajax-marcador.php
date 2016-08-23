@@ -12,16 +12,8 @@ function cintillo_games_summary_callback($date = '2016.07.01') {
   $filename = hash('sha256', str_replace('/', '.', substr($endpoint, strlen($base))));
   $filename_raw = hash('sha256', str_replace('summary', 'summary_raw', str_replace('/', '.', substr($endpoint, strlen($base)))));
 
-  if (file_exists(MARCADORDO_PLUGIN_BASE_PATH . 'storage/' . $filename)) {
-    $json = file_get_contents(MARCADORDO_PLUGIN_BASE_PATH . 'storage/' . $filename);
-    $obj = json_decode($json);
-    if( $not_expired = !((time() - $obj->last) >= 900) ) {
-      header('Content-Type:application/json; charset=UTF-8');
-      header("X-Marcador-Cached: json");
-      echo $json;
-      wp_die();
-    }
-  }
+  // Return cached response if valid timeout
+  get_cached($filename);
 
   // TODO: Move real call to golang backend
   $api_key = 'zdbbt9a5dmqu98r4gncudytr'; // temp
@@ -30,7 +22,6 @@ function cintillo_games_summary_callback($date = '2016.07.01') {
     $header = $response['headers']; // array of http header lines
     $body_raw = $response['body'];
     $body = json_decode($body_raw); // use the content
-    file_put_contents(MARCADORDO_PLUGIN_BASE_PATH. 'storage/' . $filename_raw, $body_raw);
     $response = array();
     $games = $body->league->games;
     foreach ($games as $game) {
@@ -51,16 +42,36 @@ function cintillo_games_summary_callback($date = '2016.07.01') {
       save_partido_post($game->game);
     }
     $body = array('cintillo' => $response, 'last' => time());
+    $body_json = json_encode($body);
+
+    set_cache($filename_raw, $body_raw);
+    set_cache($filename, $body_json);
   } else {
     $body = new stdClass;
     $body->error = 'Error!';
+    $body_json = json_encode($body);
   }
   
-  $body_json = json_encode($body);
-  file_put_contents(MARCADORDO_PLUGIN_BASE_PATH . 'storage/' . $filename, $body_json);
   header('Content-Type:application/json; charset=UTF-8');
   echo $body_json;
   wp_die( );
+}
+
+function get_cached($filename) {
+  if (file_exists(MARCADORDO_PLUGIN_BASE_PATH . 'storage/' . $filename)) {
+    $json = file_get_contents(MARCADORDO_PLUGIN_BASE_PATH . 'storage/' . $filename);
+    $obj = json_decode($json);
+    if( $not_expired = !((time() - $obj->last) >= 900) ) {
+      header('Content-Type:application/json; charset=UTF-8');
+      header("X-Marcador-Cached: json");
+      echo $json;
+      wp_die();
+    }
+  }
+}
+
+function set_cache($filename, $data) {
+    file_put_contents(MARCADORDO_PLUGIN_BASE_PATH. 'storage/' . $filename, $data);
 }
 
 function get_partidoId_from_gameId($gameId) {
