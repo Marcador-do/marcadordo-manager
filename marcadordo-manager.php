@@ -20,6 +20,8 @@ date_default_timezone_set ( 'America/Santo_Domingo' );
 
 //Global Required
 require_once( MARCADORDO_PLUGIN_BASE_PATH . 'libraries/autoload.php' );
+include_once(MARCADORDO_PLUGIN_BASE_PATH . "helpers/general.php");
+
 require_once( MARCADORDO_PLUGIN_BASE_PATH . 'includes/types/marcador_mail.post_type.php' );
 require_once( MARCADORDO_PLUGIN_BASE_PATH . 'includes/types/marcador_concurso.taxonomy.php' );
 require_once( MARCADORDO_PLUGIN_BASE_PATH . 'includes/types/marcador_concurso.post_type.php' );
@@ -36,8 +38,6 @@ if(is_admin()) {
 }
 //MarcadorDO Front.
 elseif (!is_admin()) {
-  include_once(MARCADORDO_PLUGIN_BASE_PATH . "helpers/general.php");
-
   //Hook that handels Contact and Work with Us
   add_action('marcador_form', 'marcadordo_form_generate_response');
   function marcadordo_form_generate_response() {
@@ -86,7 +86,7 @@ elseif (!is_admin()) {
     }
 
     // Send Mail
-    if ( marcadordo_send_mail($email_to_option, $form) === TRUE ) {
+    if ( marcadordo_form_send_mail($email_to_option, $form) === TRUE ) {
       $type = "success"; $message = $message_sent;
       // Save on Database
       marcadordo_save_mail($form);

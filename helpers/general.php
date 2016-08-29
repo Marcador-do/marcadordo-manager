@@ -61,19 +61,30 @@ function marcadordo_verify_recapcha($recaptcha) {
   }
 }
 
-function marcadordo_send_mail($email_to_option, $form) {
+function marcadordo_form_send_mail($email_to_option, $form) {
+  return marcadordo_send_mail(
+    $email_to = get_option($email_to_option),
+    $subject  = 'Formulario',
+    $html     = "<strong>Name:</strong> {$form->name}<br /><strong>Email:</strong> {$form->email}<br /><strong>Telefono:</strong> {$form->phone}<br /><strong>Compañia:</strong> {$form->enterprise}<br /><strong>Asunto:</strong> {$form->asunto}<br /><strong>Mensaje:</strong><br />{$form->message}<br />",
+    $text     = "Name:\t{$form->name}\n<strong>Email:</strong>\t{$form->email}\n<strong>Telefono:</strong>\t{$form->phone}\n<strong>Compañia:</strong>\t{$form->enterprise}\n<strong>Asunto:</strong>\t{$form->asunto}\n<strong>Mensaje:</strong>\n{$form->message}\n"
+  );
+}
+
+function marcadordo_send_mail($email_to, $subject, $html, $text) {
   $mailgun = new Mailgun(get_option('marcadordo_mailgun_key'));
   $domain = get_option('marcadordo_mailgun_domain');
-  $email_to = get_option($email_to_option);
 
   // Make the call to the client.
   $result = $mailgun->sendMessage(
     "$domain",
-    array('from'    => "Mailgun Marcador <postmaster@{$domain}>",
-          'to'      => " <{$email_to}>",
-          'subject' => '[MARCADOR] Formulario',
-          'html'    => "<strong>Name:</strong> {$form->name}<br /><strong>Email:</strong> {$form->email}<br /><strong>Telefono:</strong> {$form->phone}<br /><strong>Compañia:</strong> {$form->enterprise}<br /><strong>Asunto:</strong> {$form->asunto}<br /><strong>Mensaje:</strong><br />{$form->message}<br />",
-          'text'    => "Name:\t{$form->name}\n<strong>Email:</strong>\t{$form->email}\n<strong>Telefono:</strong>\t{$form->phone}\n<strong>Compañia:</strong>\t{$form->enterprise}\n<strong>Asunto:</strong>\t{$form->asunto}\n<strong>Mensaje:</strong>\n{$form->message}\n"));
+    array(
+      'from'    => "Mailgun Marcador <postmaster@{$domain}>",
+      'to'      => " <{$email_to}>",
+      'subject' => "[MARCADOR] {$subject}",
+      'html'    => $html,
+      'text'    => $text
+    )
+  );
 
   $response = $result->http_response_body;
   if($response->message === 'Queued. Thank you.') return TRUE;
