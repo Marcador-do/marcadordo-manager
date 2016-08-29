@@ -63,17 +63,23 @@ function marcador_register_callback() {
   $user->set_role( 'marcador_contributor' );
 
   // Email User
-  $email_sent = marcadordo_send_mail(
-    $email,
-    $subject  = "Registration",
-    $html     = "<h2>Bienvenido!!</h2><p>Tus credenciales son:<br /><strong>Usuario: </strong>{$username}<br /><strong>Contraseña: </strong>{$password}</p><p>Gracias por formar parte de nuestra comunidad!</p>",
-    $text     = "Bienvenido!!\nTus credenciales son:\nUsuario: {$username}\Contraseña: {$password}\nGracias por formar parte de nuestra comunidad!\n"
-  );
+  try {
+    $email_sent = marcadordo_send_mail(
+      $email,
+      $subject  = "Registration",
+      $html     = "<h2>Bienvenido!!</h2><p>Tus credenciales son:<br /><strong>Usuario: </strong>{$username}<br /><strong>Contraseña: </strong>{$password}</p><p>Gracias por formar parte de nuestra comunidad!</p>",
+      $text     = "Bienvenido!!\nTus credenciales son:\nUsuario: {$username}\Contraseña: {$password}\nGracias por formar parte de nuestra comunidad!\n"
+    );
+  } catch (Exception $e) {
+      $message = $e->getMessage();
+      $email_sent = false;
+  }
 
   $body                     = new stdClass;
   $body->userID             = $userId;
   $body->email_confirmation = $email_sent;
   $body->valid              = TRUE;
+  if (isset($message)) $body->message = $message;
   send_response( json_encode($body) );
 }
 
