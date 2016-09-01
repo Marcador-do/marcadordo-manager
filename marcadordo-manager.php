@@ -97,4 +97,28 @@ elseif (!is_admin()) {
     // Response
     $response = "<div class=\"{$type}\">{$message}</div>";
   }
+
+  // Adds action to handle user activation
+  add_action('marcador_activate_user', 'marcador_activate_user_action');
+  function marcador_activate_user_action () {
+    $key = $_GET['k'];
+    $args = array(
+      'role'         => 'marcador_contributor',
+      'meta_key'     => 'marcador_key',
+      'meta_value'   => $key,
+      'meta_compare' => '=',
+    );
+    $users = get_users( $args );
+
+    // If no user found, ignore and send to home
+    if ( count($users) < 1 ) wp_redirect( home_url( '/' ) );
+
+    $user = $users[0];
+    $is_verified = (bool) get_user_meta($user->ID, 'marcador_verified', TRUE);
+
+    // If user is verified, ignore and send to home
+    if ( $is_verified === TRUE ) wp_redirect( home_url( '/' ) );
+    
+    update_user_meta( $user->ID, 'marcador_verified', TRUE, FALSE );
+  }
 }
