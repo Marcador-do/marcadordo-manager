@@ -126,6 +126,7 @@ function valid_credentials($data) {
               email_exists( $data->user_login );
   if ( !$user_id ) return FALSE;
 
+  clean_user_cache( $user_id );
   $is_active = get_user_meta ( $user_id, 'marcador_verified', TRUE );
   if ( $is_active === "false" ) return FALSE;
 
