@@ -119,6 +119,7 @@ elseif (!is_admin()) {
     // If user is verified, ignore and send to home
     if ( $is_verified === TRUE ) wp_redirect( home_url( '/' ) );
     
-    update_user_meta( $user->ID, 'marcador_verified', TRUE, FALSE );
+    $meta_id = update_user_meta( $user->ID, 'marcador_verified', TRUE, FALSE );
+    update_meta_cache( 'user', $meta_id );
   }
 }
