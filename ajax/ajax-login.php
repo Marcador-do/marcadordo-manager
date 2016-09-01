@@ -120,6 +120,9 @@ function valid_credentials($data) {
               email_exists( $data->user_login );
   if ( !$user_id ) return FALSE;
 
+  $is_active = (bool) get_user_meta($user_id, 'marcador_verified', TRUE);
+  if ( !$is_active ) return FALSE;
+
   $user = wp_signon( (array) $data, FALSE );
   if (is_wp_error( $user )) return FALSE;
 
