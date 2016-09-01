@@ -70,6 +70,12 @@ function marcador_register_callback() {
     $meta_value = $verification_key,
     $unique     = TRUE
   );
+  update_user_meta(
+    $user_id,
+    'show_admin_bar_front',
+    'false',
+    'true'
+  );
 
   // Set Role
   $user = new WP_User( $user_id );
@@ -121,7 +127,7 @@ function valid_credentials($data) {
   if ( !$user_id ) return FALSE;
 
   $is_active = get_user_meta ( $user_id, 'marcador_verified', TRUE );
-  if ( $is_active === "0" ) return FALSE;
+  if ( $is_active === "false" ) return FALSE;
 
   $user = wp_signon( (array) $data, FALSE );
   if (is_wp_error( $user )) return FALSE;

@@ -114,12 +114,12 @@ elseif (!is_admin()) {
     if ( count($users) < 1 ) wp_redirect( home_url( '/' ) );
 
     $user = $users[0];
-    $is_verified = (bool) get_user_meta($user->ID, 'marcador_verified', TRUE);
+    $is_verified = get_user_meta($user->ID, 'marcador_verified', TRUE);
 
     // If user is verified, ignore and send to home
-    if ( $is_verified === TRUE ) wp_redirect( home_url( '/' ) );
+    if ( $is_verified === 'true' ) wp_redirect( home_url( '/' ) );
     
-    $meta_id = update_user_meta( $user->ID, 'marcador_verified', TRUE, FALSE );
+    $meta_id = update_user_meta( $user->ID, 'marcador_verified', 'true', 'false' );
     update_meta_cache( 'user', $meta_id );
   }
 }
