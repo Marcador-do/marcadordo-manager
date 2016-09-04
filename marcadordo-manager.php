@@ -121,5 +121,8 @@ elseif (!is_admin()) {
     
     $meta_id = update_user_meta( $user->ID, 'marcador_verified', 'true' );
     update_meta_cache( 'user', $meta_id );
+
+    // Sends account activated Email
+    send_account_active_email( $user->user_email, $user->user_login );
   }
 }

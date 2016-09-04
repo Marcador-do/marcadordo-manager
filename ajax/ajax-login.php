@@ -163,6 +163,25 @@ function send_verification_email ( $email, $username, $verification_key ) {
   return $out;
 }
 
+function send_account_active_email ( $email, $username ) {
+  $out              = new stdClass;
+  $out->email_sent  = false;
+
+  try {
+    $out->email_sent = marcadordo_send_mail(
+      $email,
+      $subject  = "Cuenta activada",
+      $html     = "<h2>Gracias {$username}!!</h2><p>Tu cuenta ha sido activada exitosamente.</p>",
+      $text     = "Gracias {$username}!!\n\nTu cuenta ha sido activada exitosamente.\n"
+    );
+  } catch (Exception $e) {
+      $out->message     = $e->getMessage();
+      $out->email_sent  = false;
+  }
+
+  return $out;
+}
+
 function generate_verification_key ( $usename, $email ) {
   return generate_key( $username . $email );
 }
