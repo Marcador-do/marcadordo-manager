@@ -34,7 +34,7 @@ function marcador_liga_post_type() {
     'description'           => __( 'Marcador Ligas', 'marcadordo' ),
     'labels'                => $labels,
     'supports'              => array( 'title', 'thumbnail', ),
-    'taxonomies'            => array( 'marcador_liga_tax' ),
+    'taxonomies'            => array( 'category','marcador_liga_tax' ),
     'hierarchical'          => false,
     'public'                => true,
     'show_ui'               => true,
