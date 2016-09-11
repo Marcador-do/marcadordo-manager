@@ -373,16 +373,16 @@
         },
         {
             "name": "php-http/curl-client",
-            "version": "v1.5.0",
+            "version": "v1.5.1",
             "source": {
                 "type": "git",
                 "url": "https://github.com/php-http/curl-client.git",
-                "reference": "fc7209fd29858718d444d41eb88f42188aeb7af4"
+                "reference": "8603d1529163fe4f353c61e7abb4e4ec0630dab3"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/php-http/curl-client/zipball/fc7209fd29858718d444d41eb88f42188aeb7af4",
-                "reference": "fc7209fd29858718d444d41eb88f42188aeb7af4",
+                "url": "https://api.github.com/repos/php-http/curl-client/zipball/8603d1529163fe4f353c61e7abb4e4ec0630dab3",
+                "reference": "8603d1529163fe4f353c61e7abb4e4ec0630dab3",
                 "shasum": ""
             },
             "require": {
@@ -425,7 +425,7 @@
                 "curl",
                 "http"
             ],
-            "time": "2016-08-03 08:46:57"
+            "time": "2016-08-29 07:54:59"
         },
         {
             "name": "php-http/discovery",
@@ -491,16 +491,16 @@
         },
         {
             "name": "php-http/httplug",
-            "version": "v1.0.0",
+            "version": "v1.1.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/php-http/httplug.git",
-                "reference": "2061047ca53a08a6b8f52e997b2a76f386b397dd"
+                "reference": "1c6381726c18579c4ca2ef1ec1498fdae8bdf018"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/php-http/httplug/zipball/2061047ca53a08a6b8f52e997b2a76f386b397dd",
-                "reference": "2061047ca53a08a6b8f52e997b2a76f386b397dd",
+                "url": "https://api.github.com/repos/php-http/httplug/zipball/1c6381726c18579c4ca2ef1ec1498fdae8bdf018",
+                "reference": "1c6381726c18579c4ca2ef1ec1498fdae8bdf018",
                 "shasum": ""
             },
             "require": {
@@ -543,7 +543,7 @@
                 "client",
                 "http"
             ],
-            "time": "2016-01-26 14:34:50"
+            "time": "2016-08-31 08:30:17"
         },
         {
             "name": "php-http/message",
@@ -663,16 +663,16 @@
         },
         {
             "name": "php-http/multipart-stream-builder",
-            "version": "0.1.1",
+            "version": "0.1.2",
             "source": {
                 "type": "git",
                 "url": "https://github.com/php-http/multipart-stream-builder.git",
-                "reference": "c55a81001be18dd8ceae5291249a85c08d9be7a4"
+                "reference": "29f8b0a9e00ebaa7cbf0f2f0f7db4e0bc3f403d2"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/php-http/multipart-stream-builder/zipball/c55a81001be18dd8ceae5291249a85c08d9be7a4",
-                "reference": "c55a81001be18dd8ceae5291249a85c08d9be7a4",
+                "url": "https://api.github.com/repos/php-http/multipart-stream-builder/zipball/29f8b0a9e00ebaa7cbf0f2f0f7db4e0bc3f403d2",
+                "reference": "29f8b0a9e00ebaa7cbf0f2f0f7db4e0bc3f403d2",
                 "shasum": ""
             },
             "require": {
@@ -715,7 +715,7 @@
                 "message",
                 "stream"
             ],
-            "time": "2016-08-10 07:59:29"
+            "time": "2016-08-31 10:13:17"
         },
         {
             "name": "php-http/promise",
