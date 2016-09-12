@@ -70,6 +70,20 @@ function get_cached($filename) {
   }
 }
 
+function get_cached_raw($filename) {
+  if (file_exists(MARCADORDO_PLUGIN_BASE_PATH . 'storage/' . $filename)) {
+    $json = file_get_contents(MARCADORDO_PLUGIN_BASE_PATH . 'storage/' . $filename);
+    //$obj = json_decode($json);
+    //if( $not_expired = !((time() - $obj->last) >= 900) ) {
+      header('Content-Type:application/json; charset=UTF-8');
+      header("X-Marcador-Cached: json");
+      echo $json;
+      wp_die();
+    //}
+  }
+  return false;
+}
+
 function set_cache($filename, $data) {
     file_put_contents(MARCADORDO_PLUGIN_BASE_PATH. 'storage/' . $filename, $data);
 }

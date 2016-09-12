@@ -31,6 +31,7 @@ require_once( MARCADORDO_PLUGIN_BASE_PATH . 'includes/types/marcador_partido.pos
 
 require_once( MARCADORDO_PLUGIN_BASE_PATH . 'ajax/ajax-marcador.php' );
 require_once( MARCADORDO_PLUGIN_BASE_PATH . 'ajax/ajax-login.php' );
+require_once( MARCADORDO_PLUGIN_BASE_PATH . 'ajax/ajax-estadisticas.php' );
 
 //MarcadorDO admin.
 if(is_admin()) {
