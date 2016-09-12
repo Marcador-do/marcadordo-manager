@@ -36,10 +36,10 @@ function cintillo_games_summary_callback($date = '2016.07.01') {
       $current->away          = new stdClass;
       $current->away->abbr    = $game->game->away->abbr;
       $current->away->runs    = $game->game->away->runs;
-      array_push($response, $current);
-
       // Crea borrador "Resumen" de partido
-      save_partido_post($game->game);
+      $borrador_id            = save_partido_post($game->game);
+      $current->link          = get_post_permalink($borrador_id);
+      array_push($response, $current);
     }
     $body = array('cintillo' => $response, 'last' => time());
     $body_json = json_encode($body);
@@ -143,6 +143,7 @@ function save_partido_post($game) {
       )
     );
   }
-
-  return wp_insert_post( $postarr, $wp_error );
+  $inserted_id = wp_insert_post( $postarr, $wp_error );
+  $current_partido = (0 === $inserted_id) ? $current_partido : $inserted_id;
+  return $current_partido;
 }
