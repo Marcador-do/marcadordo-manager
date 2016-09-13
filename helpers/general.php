@@ -61,6 +61,10 @@ function marcadordo_verify_recapcha($recaptcha) {
   }
 }
 
+
+/**
+ * Email
+ */
 function marcadordo_form_send_mail($email_to_option, $form) {
   return marcadordo_send_mail(
     $email_to = get_option($email_to_option),
@@ -109,4 +113,145 @@ function marcadordo_save_mail($form) {
     )
   );
   return wp_insert_post( $postarr, $wp_error );
+}
+
+function send_verification_email ( $email, $username, $verification_key ) {
+  $out              = new stdClass;
+  $out->email_sent  = false;
+  $link             = home_url( '/' ) . "activate?k={$verification_key}";
+  $esc_link         = esc_url( $link );
+
+  try {
+    ob_start();
+    include(MARCADORDO_PLUGIN_BASE_PATH . "includes/emails/correo-confirmacion.php");
+    $template = ob_get_contents();
+    ob_end_clean();
+
+    $out->email_sent = marcadordo_send_mail(
+      $email,
+      $subject  = "Confirmación de cuenta",
+      //$html     = "<h2>Bienvenido {$username}!!</h2><p>Debes activar tu cuenta haciendo click en el enlace <a href=\"{$link}\">{$link}</a><br /><br />O pudes copiar el enlace y pegarlo en tu navegador.</p><p>El equipo de Marcador te espera!</p>",
+      $html     = $template,
+      $text     = "Bienvenido {$username}!!\nDebes activar tu cuenta haciendo copiando y pegando este enlace en tu navegador\n\n{$link}\n\nEl equipo de Marcador te espera!\n"
+    );
+  } catch (Exception $e) {
+      $out->message     = $e->getMessage();
+      $out->email_sent  = false;
+  }
+
+  return $out;
+}
+
+function send_account_active_email ( $email, $username ) {
+  $out              = new stdClass;
+  $out->email_sent  = false;
+
+  try {
+    $out->email_sent = marcadordo_send_mail(
+      $email,
+      $subject  = "Cuenta activada",
+      $html     = "<h2>Gracias {$username}!!</h2><p>Tu cuenta ha sido activada exitosamente.</p>",
+      $text     = "Gracias {$username}!!\n\nTu cuenta ha sido activada exitosamente.\n"
+    );
+  } catch (Exception $e) {
+      $out->message     = $e->getMessage();
+      $out->email_sent  = false;
+  }
+
+  return $out;
+}
+
+function generate_verification_key ( $usename, $email ) {
+  return generate_key( $username . $email );
+}
+
+function generate_key ( $data ) {
+  $now  = time();
+  $salt = get_option( "security_salt", hash('sha1', (string) $now) );
+
+  return hash('sha256', $data . $now . $salt);
+}
+
+
+/**
+ * Ajax
+ */
+function send_error_response ($error) {
+  $body                 = new stdClass;
+  $body->error          = new stdClass;
+  $body->error->value   = TRUE;
+  $body->error->message = $error;
+  send_response( json_encode($body) );
+}
+
+function send_cached_response($json) {
+  header("X-Marcador-Cached: json");
+  send_response($json);
+}
+
+function send_response($json) {
+  header('Content-Type:application/json; charset=UTF-8');
+  echo $json;
+  wp_die();
+}
+
+
+/**
+ * Json File Cache
+ */
+function build_cache_filename ( $filename, $is_raw = false ) {
+  $hash = str_replace('/', '.', $filename);
+  if ($is_raw)  $hash = str_replace('.json', '_raw.json', $hash);
+  return hash('sha256', $hash);
+}
+
+function get_cached($filename) {
+  if (file_exists(MARCADORDO_PLUGIN_BASE_PATH . 'storage/' . $filename)) {
+    $json = file_get_contents(MARCADORDO_PLUGIN_BASE_PATH . 'storage/' . $filename);
+    $obj = json_decode($json);
+    if( $not_expired = !((time() - $obj->last) >= 900) ) {
+      return $json;
+    }
+  }
+  return false;
+}
+
+function get_cached_raw($filename) {
+  if (file_exists(MARCADORDO_PLUGIN_BASE_PATH . 'storage/' . $filename)) {
+    $json = file_get_contents(MARCADORDO_PLUGIN_BASE_PATH . 'storage/' . $filename);
+    return $json;
+  }
+  return false;
+}
+
+function set_cache($filename, $data) {
+    file_put_contents(MARCADORDO_PLUGIN_BASE_PATH. 'storage/' . $filename, $data);
+}
+
+
+/**
+ * API endpoints
+ */
+function get_sportradar_api_endpoint ( $args ) {
+  $endpoint = "";
+  $endpoint .= $args['league']; // Example: mlb
+  $endpoint .= "-" . $args['access_level']; // Example: t (Test)
+  $endpoint .= $args['version']; // Example: 5
+  $endpoint .= "/" . $args['objects']; // Example: games
+  if (isset($args['date'])) $endpoint .= "/" . str_replace(array('.', '-'), '/', $args['date']); // Example: 2016-04-12
+  if (isset($args['event_id'])) $endpoint .= "/" . $args['event_id'];
+  if (isset($args['season'])) $endpoint .= "/" . $args['season'];
+  if (isset($args['char'])) $endpoint .= "/" . $args['char'];
+  $endpoint .= "/" . $args['type']; // Example: summary
+  $endpoint .= "." . $args['format']; // Example: json
+
+  return $endpoint;
+}
+
+function get_sportradar_endpoint_url ( $endpoint ) {
+  $url = 'http://api.sportradar.us/';
+  $url .= $endpoint;
+  $url .= '?api_key=zdbbt9a5dmqu98r4gncudytr';
+
+  return $url;
 }

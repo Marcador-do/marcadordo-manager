@@ -2,22 +2,29 @@
 add_action('wp_ajax_cintillo', 'cintillo_games_summary_callback');
 add_action('wp_ajax_nopriv_cintillo', 'cintillo_games_summary_callback');
 
-function cintillo_games_summary_callback($date = '2016.07.01') {
-  $date = '2016.07.01';
-  if (isset($_POST['date'])) $date = $_POST['date'];
+function cintillo_games_summary_callback() {
+  if (isset($_POST['date'])) $date = date("Y/m/d", strtotime($_POST['date']));
+  else $date = date('Y/m/d');
 
-  $base = 'http://api.sportradar.us/';
-  $endpoint = $base . 'mlb-t5/games/' . str_replace('.', '/', $date) . 
-              '/summary.json';
-  $filename = hash('sha256', str_replace('/', '.', substr($endpoint, strlen($base))));
-  $filename_raw = hash('sha256', str_replace('summary', 'summary_raw', str_replace('/', '.', substr($endpoint, strlen($base)))));
+  $args = array(
+    'league'        => 'mlb',
+    'access_level'  => 't',
+    'version'       => 5,
+    'objects'       => 'games',
+    'date'          => $date,
+    'type'          => 'summary',
+    'format'        => 'json',
+  );
+  $endpoint = get_sportradar_api_endpoint ( $args );
+
+  $filename = build_cache_filename ( '[cintillo]'.$endpoint, $is_raw = false );
+  $filename_raw = build_cache_filename ( $endpoint, $is_raw = true );
 
   // Return cached response if valid timeout
-  get_cached($filename);
+  $body_json = get_cached($filename);
+  if ($body_json !== false) send_cached_response($body_json);
 
-  // TODO: Move real call to golang backend
-  $api_key = 'zdbbt9a5dmqu98r4gncudytr'; // temp
-  $response = wp_remote_get( $endpoint . '?api_key=' . $api_key );
+  $response = wp_remote_get( get_sportradar_endpoint_url ( $endpoint ) );
   if( is_array($response) ) {
     $header = $response['headers']; // array of http header lines
     $body_raw = $response['body'];
@@ -47,45 +54,10 @@ function cintillo_games_summary_callback($date = '2016.07.01') {
     set_cache($filename_raw, $body_raw);
     set_cache($filename, $body_json);
   } else {
-    $body = new stdClass;
-    $body->error = 'Error!';
-    $body_json = json_encode($body);
+    send_error_response ('Error!');
   }
   
-  header('Content-Type:application/json; charset=UTF-8');
-  echo $body_json;
-  wp_die( );
-}
-
-function get_cached($filename) {
-  if (file_exists(MARCADORDO_PLUGIN_BASE_PATH . 'storage/' . $filename)) {
-    $json = file_get_contents(MARCADORDO_PLUGIN_BASE_PATH . 'storage/' . $filename);
-    $obj = json_decode($json);
-    if( $not_expired = !((time() - $obj->last) >= 900) ) {
-      header('Content-Type:application/json; charset=UTF-8');
-      header("X-Marcador-Cached: json");
-      echo $json;
-      wp_die();
-    }
-  }
-}
-
-function get_cached_raw($filename) {
-  if (file_exists(MARCADORDO_PLUGIN_BASE_PATH . 'storage/' . $filename)) {
-    $json = file_get_contents(MARCADORDO_PLUGIN_BASE_PATH . 'storage/' . $filename);
-    //$obj = json_decode($json);
-    //if( $not_expired = !((time() - $obj->last) >= 900) ) {
-      header('Content-Type:application/json; charset=UTF-8');
-      header("X-Marcador-Cached: json");
-      echo $json;
-      wp_die();
-    //}
-  }
-  return false;
-}
-
-function set_cache($filename, $data) {
-    file_put_contents(MARCADORDO_PLUGIN_BASE_PATH. 'storage/' . $filename, $data);
+  send_response($body_json);
 }
 
 function get_partidoId_from_gameId($gameId) {
@@ -105,7 +77,6 @@ function get_partidoId_from_gameId($gameId) {
 }
 
 function save_partido_post($game) {
-
   $data               = new stdClass;
   $data->home         = new stdClass;
   $data->away         = new stdClass;
