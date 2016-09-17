@@ -110,19 +110,16 @@ function valid_google_credentials ($credentials)
 {
     $user_id = username_exists ( $credentials->user_login )
                || email_exists ( $credentials->user_login );
-    if (!$user_id) send_error_response ( "Invalid credentials" );
+    if (FALSE === $user_id || !is_marcador_collaborator ( $user_id )) return FALSE;
 
     $id_token = $_POST[ 'auth' ];
     $url = "https://www.googleapis.com/oauth2/v3/tokeninfo?id_token=" . $id_token;
 
     $response = wp_remote_get ( $url );
-    if (is_wp_error ( $response )) send_error_response ( "Couldn't validate" );
-
+    if (is_wp_error ( $response )) return FALSE; // Couldn't validate data
     $body = json_decode ( $reponse[ 'body' ] );
-    if ($body->email_verified === TRUE && $body->email === $credentials->user_login) {
-        wp_set_auth_cookie($user_id, FALSE);
-        return TRUE;
-    }
+    if (FALSE === $body->email_verified || $body->email !== $credentials->user_login) return FALSE;
 
+    wp_set_auth_cookie ( $user_id , FALSE );
     return FALSE;
 }
