@@ -81,9 +81,6 @@ function marcador_facebook_login ()
 /**
  * Validates proper login fields
  *
- * @param $_POST['_wpnonce'] string
- * @param $_POST['username'] string
- * @param $_POST['password'] string
  * @return bool|false|int
  */
 function valid_login_post_fields ()
