@@ -29,8 +29,10 @@ require_once ( MARCADORDO_PLUGIN_BASE_PATH . 'includes/types/marcador_liga.post_
 require_once ( MARCADORDO_PLUGIN_BASE_PATH . 'includes/types/marcador_liga.taxonomy.php' );
 require_once ( MARCADORDO_PLUGIN_BASE_PATH . 'includes/types/marcador_partido.post_type.php' );
 
-require_once ( MARCADORDO_PLUGIN_BASE_PATH . 'ajax/ajax-marcador.php' );
 require_once ( MARCADORDO_PLUGIN_BASE_PATH . 'ajax/ajax-login.php' );
+require_once ( MARCADORDO_PLUGIN_BASE_PATH . 'ajax/ajax-logout.php' );
+require_once ( MARCADORDO_PLUGIN_BASE_PATH . 'ajax/ajax-register.php' );
+require_once ( MARCADORDO_PLUGIN_BASE_PATH . 'ajax/ajax-marcador.php' );
 require_once ( MARCADORDO_PLUGIN_BASE_PATH . 'ajax/ajax-estadisticas.php' );
 
 //MarcadorDO admin.
