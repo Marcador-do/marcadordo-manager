@@ -16,7 +16,7 @@ function marcador_login_callback ()
         $login_function .= "_login";
     } else if (isset( $_POST[ 'auth_type' ] ) && isset( $_POST[ 'auth_type' ] )) {
         $login_function .= "_" . $_POST[ 'auth_type' ] . "_login"; // should be "google" or facebook
-    } else send_error_response ( "Invalid credentials" );
+    } else send_error_response ( "All fields are required" );
 
     try {
         $data = $login_function ();
@@ -25,7 +25,7 @@ function marcador_login_callback ()
         $body->valid = TRUE;
         send_response ( json_encode ( $body ) );
     } catch (Exception $e) {
-        send_error_response ( $e->getMessage() );
+        send_error_response ( $e->getMessage () );
     }
 }
 
@@ -118,7 +118,7 @@ function valid_google_credentials ($credentials)
     if ($is_active === "false") return FALSE;
 
     $id_token = $_POST[ 'auth' ];
-    $google_id = is_valid_google_token ($credentials->user_login , $id_token);
+    $google_id = is_valid_google_token ( $credentials->user_login , $id_token );
 
     $marcador_google_id = get_user_meta ( $user_id , 'marcador_google_id' , TRUE );
     if ($marcador_google_id !== $google_id) return FALSE;
