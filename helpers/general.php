@@ -309,7 +309,7 @@ function is_wp_user ($thing)
 /**
  * @param $user_email
  * @param $google_token
- * @return bool|false|GoogleID
+ * @return bool|false|string
  */
 function is_valid_google_token ($user_email , $google_token)
 {
@@ -320,5 +320,5 @@ function is_valid_google_token ($user_email , $google_token)
     $body = json_decode ( $response[ 'body' ] );
     if ("true" !== $body->email_verified || $body->email !== $user_email) return FALSE;
 
-    return $body->sub;
+    return $body->sub; // Google User Id
 }
