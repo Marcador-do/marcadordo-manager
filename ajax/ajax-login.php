@@ -49,7 +49,7 @@ function marcador_facebook_login ()
     $data->user_login = $_POST[ 'username' ];
 
     $user_id = username_exists ( $data->user_login )
-               || email_exists ( $data->user_login );
+               | email_exists ( $data->user_login );
     if (!$user_id) send_error_response ( "Invalid credentials" );
 
     $id_token = $_POST[ 'auth' ];
@@ -86,9 +86,8 @@ function valid_login_post_fields ()
  */
 function valid_credentials ($credentials)
 {
-    $user_id = username_exists ( $credentials->user_login )
-               || email_exists ( $credentials->user_login );
-    if (!$user_id) return FALSE;
+    $user_id = username_exists ( $credentials->user_login ) | email_exists ( $credentials->user_login );
+    if (FALSE === $user_id || !is_marcador_collaborator ( $user_id )) return FALSE;
 
     $is_active = get_user_meta ( $user_id , 'marcador_verified' , TRUE );
     if ($is_active === "false") return FALSE;
@@ -96,20 +95,17 @@ function valid_credentials ($credentials)
     $user = wp_signon ( (array)$credentials , FALSE );
     if (is_wp_error ( $user )) return FALSE;
 
-    $marcador_user_role = 'marcador_contributor';
-    $is_collaborator = array_search ( $marcador_user_role , $user->roles , FALSE );
-    if ($is_collaborator === FALSE || is_null ( $is_collaborator )) {
-        wp_logout ();
-        return FALSE;
-    }
-
     return TRUE;
 }
 
+
+/**
+ * @param $credentials
+ * @return bool
+ */
 function valid_google_credentials ($credentials)
 {
-    $user_id = username_exists ( $credentials->user_login )
-               || email_exists ( $credentials->user_login );
+    $user_id = username_exists ( $credentials->user_login ) | email_exists ( $credentials->user_login );
     if (FALSE === $user_id || !is_marcador_collaborator ( $user_id )) return FALSE;
 
     $id_token = $_POST[ 'auth' ];
