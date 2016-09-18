@@ -304,3 +304,21 @@ function is_wp_user ($thing)
     if ("WP_User" === get_class ( $user )) return $user;
     return FALSE;
 }
+
+
+/**
+ * @param $user_email
+ * @param $google_token
+ * @return bool|false|GoogleID
+ */
+function is_valid_google_token ($user_email , $google_token)
+{
+    $url = "https://www.googleapis.com/oauth2/v3/tokeninfo?id_token=" . $google_token;
+
+    $response = wp_remote_get ( $url );
+    if (is_wp_error ( $response )) return FALSE; // Couldn't validate data
+    $body = json_decode ( $response[ 'body' ] );
+    if ("true" !== $body->email_verified || $body->email !== $user_email) return FALSE;
+
+    return $body->sub;
+}
