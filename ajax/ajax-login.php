@@ -11,17 +11,22 @@ function marcador_login_callback ()
 {
     if (!valid_login_post_fields ()) send_error_response ( "All fields required" );
 
-    if (!isset( $_POST[ 'auth' ] )) $data = marcador_login ();
-    else if (isset( $_POST[ 'auth_type' ] ) && $_POST[ 'auth_type' ] === "google")
-        $data = marcador_google_login ();
-    else if (isset( $_POST[ 'auth_type' ] ) && $_POST[ 'auth_type' ] === "facebook")
-        $data = marcador_facebook_login ();
-    else send_error_response ( "Invalid credentials" );
+    $login_function = "marcador";
+    if (!isset( $_POST[ 'auth' ] ) && !isset( $_POST[ 'auth_type' ] )) {
+        $login_function .= "_login";
+    } else if (isset( $_POST[ 'auth_type' ] ) && isset( $_POST[ 'auth_type' ] )) {
+        $login_function .= "_" . $_POST[ 'auth_type' ] . "_login"; // should be "google" or facebook
+    } else send_error_response ( "Invalid credentials" );
 
-    $body = new stdClass;
-    $body->data = "Hello " . $data->user_login . "!";
-    $body->valid = TRUE;
-    send_response ( json_encode ( $body ) );
+    try {
+        $data = $login_function ();
+        $body = new stdClass;
+        $body->data = "Hello " . $data->user_login . "!";
+        $body->valid = TRUE;
+        send_response ( json_encode ( $body ) );
+    } catch (Exception $e) {
+        send_error_response ( $e->getMessage() );
+    }
 }
 
 function marcador_login ()
@@ -74,7 +79,8 @@ function valid_login_post_fields ()
 {
     $valid = check_ajax_referer ( 'marcador_ajax_login' , FALSE , FALSE );
     $valid = $valid && isset( $_POST[ 'username' ] ) && strlen ( $_POST[ 'username' ] ) > 0;
-    $valid = $valid && isset( $_POST[ 'password' ] ) && strlen ( $_POST[ 'password' ] ) > 0;
+    if (!isset( $_POST[ 'auth' ] ) && !isset( $_POST[ 'auth_type' ] ))
+        $valid = $valid && isset( $_POST[ 'password' ] ) && strlen ( $_POST[ 'password' ] ) > 0;
 
     return $valid;
 }
@@ -108,13 +114,14 @@ function valid_google_credentials ($credentials)
     $user_id = username_exists ( $credentials->user_login ) | email_exists ( $credentials->user_login );
     if (FALSE === $user_id || !is_marcador_collaborator ( $user_id )) return FALSE;
 
-    $id_token = $_POST[ 'auth' ];
-    $url = "https://www.googleapis.com/oauth2/v3/tokeninfo?id_token=" . $id_token;
+    $is_active = get_user_meta ( $user_id , 'marcador_verified' , TRUE );
+    if ($is_active === "false") return FALSE;
 
-    $response = wp_remote_get ( $url );
-    if (is_wp_error ( $response )) return FALSE; // Couldn't validate data
-    $body = json_decode ( $reponse[ 'body' ] );
-    if (FALSE === $body->email_verified || $body->email !== $credentials->user_login) return FALSE;
+    $id_token = $_POST[ 'auth' ];
+    $google_id = is_valid_google_token ($credentials->user_login , $id_token);
+
+    $marcador_google_id = get_user_meta ( $user_id , 'marcador_google_id' , TRUE );
+    if ($marcador_google_id !== $google_id) return FALSE;
 
     wp_set_auth_cookie ( $user_id , FALSE );
     return FALSE;
