@@ -30,7 +30,7 @@ function marcador_register_callback ()
     add_user_meta ( // Verified status
         $user_id ,
         $meta_key = 'marcador_verified' ,
-        $meta_value = '0' ,
+        $meta_value = 'false' ,
         $unique = TRUE
     );
     add_user_meta ( // Activation & pass reset key field
@@ -54,7 +54,7 @@ function marcador_register_callback ()
     $out = send_verification_email ( $email , $username , $verification_key );
 
     $body = new stdClass;
-    $body->userID = $userId;
+    $body->userID = $user_id;
     $body->email_confirmation = $out->email_sent;
     $body->valid = TRUE;
     if (isset( $out->message )) $body->message = $out->message;
