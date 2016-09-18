@@ -6,7 +6,7 @@ function marcador_logout_callback ()
 {
     if (!valid_logout_post_fields ()) send_error_response ( "Invalid fields" );
 
-    wp_logout ();
+    wp_clear_auth_cookie();
     $body = new stdClass;
     $body->message = 'User logout!';
     $body->valid = TRUE;
@@ -16,6 +16,5 @@ function marcador_logout_callback ()
 
 function valid_logout_post_fields ()
 {
-    if (isset( $_POST[ 'date' ] )) $date = $_POST[ 'date' ];
     return TRUE;
 }
