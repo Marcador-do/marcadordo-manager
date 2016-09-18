@@ -278,12 +278,42 @@ function get_sportradar_endpoint_url ($endpoint)
 
 
 /**
- * @param $thing
+ * @param int|WP_USer $thing
+ * @param bool $check_active
+ * @return bool|int
+ */
+function is_marcador_user ($thing , $check_active = FALSE)
+{
+    // WP account doesn't exist
+    $user_id = username_exists ( $thing->user_login ) | email_exists ( $thing->user_login );
+    if (FALSE === $user_id || !is_marcador_collaborator ( $user_id )) return FALSE;
+
+    if ($check_active) {
+        if (!is_marcador_user_active ( $user_id )) return FALSE;
+    }
+
+    return $user_id;
+}
+
+
+/**
+ * @param int $user_id
+ * @return bool
+ */
+function is_marcador_user_active ($user_id)
+{
+    $is_active = get_user_meta ( $user_id , 'marcador_verified' , TRUE );
+    return ( $is_active === "true" );
+}
+
+
+/**
+ * @param int|WP_User $thing
  * @return bool
  */
 function is_marcador_collaborator ($thing)
 {
-    $user = is_wp_user ( $thing );
+    $user = is_wp_user_object ( $thing );
     if (FALSE === $user) return FALSE;
 
     $marcador_user_role = 'marcador_contributor';
@@ -295,10 +325,10 @@ function is_marcador_collaborator ($thing)
 
 
 /**
- * @param $thing
+ * @param int|WP_User $thing
  * @return bool|false|WP_User
  */
-function is_wp_user ($thing)
+function is_wp_user_object ($thing)
 {
     $user = ( "integer" === gettype ( $thing ) ) ? get_user_by ( "id" , $thing ) : $thing;
     if ("WP_User" === get_class ( $user )) return $user;
@@ -307,8 +337,8 @@ function is_wp_user ($thing)
 
 
 /**
- * @param $user_email
- * @param $google_token
+ * @param string $user_email
+ * @param string $google_token
  * @return bool|false|string
  */
 function is_valid_google_token ($user_email , $google_token)

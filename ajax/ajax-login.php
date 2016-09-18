@@ -62,7 +62,7 @@ function marcador_facebook_login ()
     $response = wp_remote_get ( $url );
     if (is_wp_error ( $response )) send_error_response ( "Couldn't validate" );
 
-    $body = json_decode ( $reponse[ 'body' ] );
+    $body = json_decode ( $response[ 'body' ] );
     if ($body->email_verified === true && $body->email === $data->user_login)
         return $data;
 
@@ -87,16 +87,13 @@ function valid_login_post_fields ()
 
 
 /**
- * @param $credentials
+ * @param object $credentials
  * @return bool
  */
 function valid_credentials ($credentials)
 {
-    $user_id = username_exists ( $credentials->user_login ) | email_exists ( $credentials->user_login );
-    if (FALSE === $user_id || !is_marcador_collaborator ( $user_id )) return FALSE;
-
-    $is_active = get_user_meta ( $user_id , 'marcador_verified' , TRUE );
-    if ($is_active === "false") return FALSE;
+    $user_id = is_marcador_user ( $credentials , $check_active = TRUE );
+    if ($user_id === FALSE) return FALSE;
 
     $user = wp_signon ( (array)$credentials , FALSE );
     if (is_wp_error ( $user )) return FALSE;
@@ -106,23 +103,22 @@ function valid_credentials ($credentials)
 
 
 /**
- * @param $credentials
+ * @param object $credentials
  * @return bool
  */
 function valid_google_credentials ($credentials)
 {
-    $user_id = username_exists ( $credentials->user_login ) | email_exists ( $credentials->user_login );
-    if (FALSE === $user_id || !is_marcador_collaborator ( $user_id )) return FALSE;
-
-    $is_active = get_user_meta ( $user_id , 'marcador_verified' , TRUE );
-    if ($is_active === "false") return FALSE;
+    $user_id = is_marcador_user ( $credentials , $check_active = TRUE );
+    if ($user_id === FALSE) return FALSE;
 
     $id_token = $_POST[ 'auth' ];
     $google_id = is_valid_google_token ( $credentials->user_login , $id_token );
+    if ($google_id === FALSE) return FALSE;
 
+    // If google id not registered, save it
     $marcador_google_id = get_user_meta ( $user_id , 'marcador_google_id' , TRUE );
-    if ($marcador_google_id !== $google_id) return FALSE;
+    update_user_meta ( $user_id , 'marcador_google_id' , $google_id , $marcador_google_id );
 
     wp_set_auth_cookie ( $user_id , FALSE );
-    return FALSE;
+    return TRUE;
 }
