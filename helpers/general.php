@@ -352,3 +352,35 @@ function is_valid_google_token ($user_email , $google_token)
 
     return $body->sub; // Google User Id
 }
+
+
+/**
+ * @param string $user_email
+ * @param string $facebook_token
+ * @return bool|false|string
+ */
+function is_valid_facebook_token ($user_email , $facebook_token)
+{
+    $parts = explode(".", $facebook_token, 2);
+    $facebook_sign = $parts[0];
+    $base64_payload = $parts[1];
+
+    $app_secret =  get_option ( 'marcadordo_facebook_app_secret' );
+    $marcador_sign =  base64_encode( hash_hmac('sha256', $base64_payload, $app_secret, TRUE) );
+    if (clean_sign($facebook_sign) !== clean_sign($marcador_sign)) return FALSE; // Not signed by Facebook
+
+    $body = json_decode ( base64_decode($base64_payload) );
+
+    return $body->user_id; // Facebook User Id
+}
+
+function clean_sign ($sign)
+{
+    $out = str_replace("_", "", $sign);
+    $out = str_replace("-", "", $out);
+    $out = str_replace("/", "", $out);
+    $out = str_replace("+", "", $out);
+    $out = str_replace("=", "", $out);
+
+    return $out;
+}
