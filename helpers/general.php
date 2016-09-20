@@ -152,6 +152,7 @@ function send_account_active_email ($email , $username)
 {
     $out = new stdClass;
     $out->email_sent = false;
+    $link = home_url ( '/' );
 
     try {
         ob_start ();
@@ -163,7 +164,7 @@ function send_account_active_email ($email , $username)
             $email ,
             $subject = "Cuenta activada" ,
             $html = $template ,
-            $text = "Gracias {$username}!!\n\nTu cuenta ha sido activada exitosamente.\n"
+            $text = "¡Bienvenido a marcador.do\n\nEntérate de las grandes noticias deportivas del momento. Ahora puedes disfrutar de:\n\n\t- Obtener notificaciones de noticias según tu equipo de preferencia.\n\t- Enviarnos tus noticias para que puedan ser compartidas en nuestro portal.\n\t- Estadísticas y programaciones en vivo.\n\n{$link}"
         );
     } catch (Exception $e) {
         $out->message = $e->getMessage ();
