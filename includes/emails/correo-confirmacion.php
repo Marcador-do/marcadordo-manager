@@ -8,7 +8,7 @@
 
 			<title>Marcador.do | Confirmar cuenta</title>
 
-			<link rel="stylesheet" type="text/css" href="<?php echo get_template_directory_uri(); ?>assets/emails/style.css" />
+			<link rel="stylesheet" type="text/css" href="<?php echo get_template_directory_uri(); ?>/assets/emails/style.css" />
 		</head>
 
 		<body>
@@ -16,7 +16,7 @@
 				<div class="container">
 					<div class="header">
 						<div class="logo">
-							<img src="<?php echo get_template_directory_uri(); ?>assets/emails/assets/logo-marcador-blanco.png"/>
+							<img src="<?php echo get_template_directory_uri(); ?>/assets/emails/assets/logo-marcador-blanco.png"/>
 							<p>No seguimos las tendencias, las marcamos.</p>
 						</div>
 
@@ -44,10 +44,10 @@
 
 					<div class="container-redes">
 						<ul>
-							<li class="texto_redes"><img src="<?php echo get_template_directory_uri(); ?>assets/emails/assets/logo-marcador-rojo.png" /></li>
-							<li><a target="_blank" href="https://www.facebook.com/Marcador.do/"><img src="<?php echo get_template_directory_uri(); ?>assets/emails/assets/emr_facebook.png" /></a>
-							<li><a target="_blank" href="https://twitter.com/marcador_do"><img src="<?php echo get_template_directory_uri(); ?>assets/emails/assets/emr_twitter.png" /></a>
-							<li><a target="_blank" href="https://www.instagram.com/marcador.do/"><img src="<?php echo get_template_directory_uri(); ?>assets/emails/assets/emr_instagram.png" /></a>
+							<li class="texto_redes"><img src="<?php echo get_template_directory_uri(); ?>/assets/emails/assets/logo-marcador-rojo.png" /></li>
+							<li><a target="_blank" href="https://www.facebook.com/Marcador.do/"><img src="<?php echo get_template_directory_uri(); ?>/assets/emails/assets/emr_facebook.png" /></a>
+							<li><a target="_blank" href="https://twitter.com/marcador_do"><img src="<?php echo get_template_directory_uri(); ?>/assets/emails/assets/emr_twitter.png" /></a>
+							<li><a target="_blank" href="https://www.instagram.com/marcador.do/"><img src="<?php echo get_template_directory_uri(); ?>/assets/emails/assets/emr_instagram.png" /></a>
 						</ul>
 				</div>
 			</div>
