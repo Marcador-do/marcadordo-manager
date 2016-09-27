@@ -140,7 +140,7 @@ function posiciones_callback () {
   if (isset($_POST['date'])) $date = date("Y", strtotime($_POST['date']));
   else $date = date('Y');
   if (isset($_POST['season'])) $season = $_POST['season'];
-  else $seasson = 'REG';
+  else $season = 'REG';
 
   $args = array(
     'league'        => 'mlb',
@@ -148,7 +148,7 @@ function posiciones_callback () {
     'version'       => 5,
     'objects'       => 'seasontd',
     'date'          => $date,
-    'season'        => $season,
+    'season'        => $season, // PRE, REG, PST
     'type'          => 'standings',
     'format'        => 'json',
   );
