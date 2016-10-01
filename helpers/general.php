@@ -137,7 +137,6 @@ function send_verification_email ($email , $username , $verification_key)
         $out->email_sent = marcadordo_send_mail (
             $email ,
             $subject = "Confirmación de cuenta" ,
-            //$html     = "<h2>Bienvenido {$username}!!</h2><p>Debes activar tu cuenta haciendo click en el enlace <a href=\"{$link}\">{$link}</a><br /><br />O pudes copiar el enlace y pegarlo en tu navegador.</p><p>El equipo de Marcador te espera!</p>",
             $html = $template ,
             $text = "Bienvenido {$username}!!\nDebes activar tu cuenta haciendo copiando y pegando este enlace en tu navegador\n\n{$link}\n\nEl equipo de Marcador te espera!\n"
         );
@@ -153,13 +152,19 @@ function send_account_active_email ($email , $username)
 {
     $out = new stdClass;
     $out->email_sent = false;
+    $link = home_url ( '/' );
 
     try {
+        ob_start ();
+        include ( MARCADORDO_PLUGIN_BASE_PATH . "includes/emails/correo-activacion.php" );
+        $template = ob_get_contents ();
+        ob_end_clean ();
+
         $out->email_sent = marcadordo_send_mail (
             $email ,
             $subject = "Cuenta activada" ,
-            $html = "<h2>Gracias {$username}!!</h2><p>Tu cuenta ha sido activada exitosamente.</p>" ,
-            $text = "Gracias {$username}!!\n\nTu cuenta ha sido activada exitosamente.\n"
+            $html = $template ,
+            $text = "¡Bienvenido a marcador.do\n\nEntérate de las grandes noticias deportivas del momento. Ahora puedes disfrutar de:\n\n\t- Obtener notificaciones de noticias según tu equipo de preferencia.\n\t- Enviarnos tus noticias para que puedan ser compartidas en nuestro portal.\n\t- Estadísticas y programaciones en vivo.\n\n{$link}"
         );
     } catch (Exception $e) {
         $out->message = $e->getMessage ();
@@ -169,7 +174,7 @@ function send_account_active_email ($email , $username)
     return $out;
 }
 
-function generate_verification_key ($usename , $email)
+function generate_verification_key ($username , $email)
 {
     return generate_key ( $username . $email );
 }
@@ -351,4 +356,36 @@ function is_valid_google_token ($user_email , $google_token)
     if ("true" !== $body->email_verified || $body->email !== $user_email) return FALSE;
 
     return $body->sub; // Google User Id
+}
+
+
+/**
+ * @param string $user_email
+ * @param string $facebook_token
+ * @return bool|false|string
+ */
+function is_valid_facebook_token ($user_email , $facebook_token)
+{
+    $parts = explode ( "." , $facebook_token , 2 );
+    $facebook_sign = $parts[ 0 ];
+    $base64_payload = $parts[ 1 ];
+
+    $app_secret = get_option ( 'marcadordo_facebook_app_secret' );
+    $marcador_sign = base64_encode ( hash_hmac ( 'sha256' , $base64_payload , $app_secret , TRUE ) );
+    if (clean_sign ( $facebook_sign ) !== clean_sign ( $marcador_sign )) return FALSE; // Not signed by Facebook
+
+    $body = json_decode ( base64_decode ( $base64_payload ) );
+
+    return $body->user_id; // Facebook User Id
+}
+
+function clean_sign ($sign)
+{
+    $out = str_replace ( "_" , "" , $sign );
+    $out = str_replace ( "-" , "" , $out );
+    $out = str_replace ( "/" , "" , $out );
+    $out = str_replace ( "+" , "" , $out );
+    $out = str_replace ( "=" , "" , $out );
+
+    return $out;
 }

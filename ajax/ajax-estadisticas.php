@@ -140,7 +140,7 @@ function posiciones_callback () {
   if (isset($_POST['date'])) $date = date("Y", strtotime($_POST['date']));
   else $date = date('Y');
   if (isset($_POST['season'])) $season = $_POST['season'];
-  else $seasson = 'REG';
+  else $season = 'REG';
 
   $args = array(
     'league'        => 'mlb',
@@ -148,7 +148,7 @@ function posiciones_callback () {
     'version'       => 5,
     'objects'       => 'seasontd',
     'date'          => $date,
-    'season'        => $season,
+    'season'        => $season, // PRE, REG, PST
     'type'          => 'standings',
     'format'        => 'json',
   );
@@ -182,7 +182,7 @@ function estadisticas_callback () {
   if (isset($_POST['date'])) $date = date("Y", strtotime($_POST['date']));
   else $date = date('Y');
   if (isset($_POST['season'])) $season = strtoupper($_POST['season']);
-  else $seasson = 'REG';
+  else $season = 'REG';
 
   $args = array(
     'league'        => 'mlb',
@@ -213,22 +213,22 @@ function estadisticas_callback () {
     $leagues = $body->leagues;
     foreach ($leagues as $league) {
       if ($league->alias === 'AL' || $league->alias === 'NL') {
-        $current                  = new stdClass;
-        $current->id              = $league->id;
-        $current->name            = $league->name;
-        $current->alias           = $league->alias;
-        $current->hitting         = new stdClass;
-        $current->hitting->batting_average = $league->hitting->batting_average->players;
-        $current->hitting->home_runs = $league->hitting->home_runs->players;
-        $current->hitting->runs_batted_in = $league->hitting->runs_batted_in->players;
-        $current->hitting->hits = $league->hitting->hits->players;
-        $current->hitting->stolen_bases = $league->hitting->stolen_bases->players;
-        $current->pitching        = new stdClass;
-        $current->pitching->earned_run_average = $current->pitching->earned_run_average->players;
-        $current->pitching->games_won = $current->pitching->games_won->players;
-        $current->pitching->strikeouts = $current->pitching->strikeouts->players;
-        $current->pitching->games_saved = $current->pitching->games_saved->players;
-        $current->pitching->games_completed = $current->pitching->games_completed->players;
+        $current                                = new stdClass;
+        $current->id                            = $league->id;
+        $current->name                          = $league->name;
+        $current->alias                         = $league->alias;
+        $current->hitting                       = new stdClass;
+        $current->hitting->batting_average      = $league->hitting->batting_average->players;
+        $current->hitting->home_runs            = $league->hitting->home_runs->players;
+        $current->hitting->runs_batted_in       = $league->hitting->runs_batted_in->players;
+        $current->hitting->hits                 = $league->hitting->hits->players;
+        $current->hitting->stolen_bases         = $league->hitting->stolen_bases->players;
+        $current->pitching                      = new stdClass;
+        $current->pitching->earned_run_average  = $league->pitching->earned_run_average->players;
+        $current->pitching->games_won           = $league->pitching->games_won->players;
+        $current->pitching->strikeouts          = $league->pitching->strikeouts->players;
+        $current->pitching->games_saved         = $league->pitching->games_saved->players;
+        $current->pitching->games_completed     = $league->pitching->games_completed->players;
 
         array_push($response, $current);
       }
