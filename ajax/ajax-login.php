@@ -52,27 +52,9 @@ function marcador_facebook_login ()
 {
     $data = new stdClass;
     $data->user_login = $_POST[ 'username' ];
-<<<<<<< HEAD
-
-    $user_id = username_exists ( $data->user_login )
-               | email_exists ( $data->user_login );
-    if (!$user_id) send_error_response ( "Invalid credentials" );
-
-    $id_token = $_POST[ 'auth' ];
-    $url = "https://graph.facebook.com/debug_token?input_token={$id_token}&access_token={$id_token}";
-    $response = wp_remote_get ( $url );
-    if (is_wp_error ( $response )) send_error_response ( "Couldn't validate" );
-
-    $body = json_decode ( $response[ 'body' ] );
-    if ($body->email_verified === true && $body->email === $data->user_login)
-        return $data;
-
-    send_error_response ( "Couldn't validate" );
-=======
 
     if (!valid_facebook_credentials ( $data )) send_error_response("Invalid credentials");
     return $data;
->>>>>>> 4f83bda41ee2669b111eeeef765ad4150d546106
 }
 
 
@@ -116,16 +98,6 @@ function valid_google_credentials ($credentials)
 {
     $user_id = is_marcador_user ( $credentials , $check_active = TRUE );
     if ($user_id === FALSE) return FALSE;
-<<<<<<< HEAD
-
-    $id_token = $_POST[ 'auth' ];
-    $google_id = is_valid_google_token ( $credentials->user_login , $id_token );
-    if ($google_id === FALSE) return FALSE;
-
-    // If google id not registered, save it
-    $marcador_google_id = get_user_meta ( $user_id , 'marcador_google_id' , TRUE );
-    update_user_meta ( $user_id , 'marcador_google_id' , $google_id , $marcador_google_id );
-=======
 
     $id_token = $_POST[ 'auth' ];
     $google_id = is_valid_google_token ( $credentials->user_login , $id_token );
@@ -152,7 +124,6 @@ function valid_facebook_credentials ($credentials)
     // If facebook id not registered, save it
     $marcador_facebook_id = get_user_meta( $user_id, 'marcador_facebook_id', TRUE );
     update_user_meta( $user_id, 'marcador_facebook_id', $facebook_id, $marcador_facebook_id );
->>>>>>> 4f83bda41ee2669b111eeeef765ad4150d546106
 
     wp_set_auth_cookie ( $user_id , FALSE );
     return TRUE;
