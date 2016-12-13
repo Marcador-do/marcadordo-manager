@@ -1,60 +1,115 @@
 <!DOCTYPE html>
-
 	<html>
 		<head>
 			<meta charset="UTF-8">
-			<meta name="description" content="Portal deportivo en República Dominicana">
-			<meta name="keywords" content="beisbol, baloncesto, noticias, fútbol">
-			<meta name="viewport" content="width=device-width" scale="1.0">
+			<meta name="description" content="Portal deportivo en República Dominicana" />
+			<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+			<meta name="keywords" content="beisbol, baloncesto, noticias, fútbol" />
+			<meta name="viewport" content="width=device-width" scale="1.0" />
 
-			<title>Restablecer contrasena</title>
+			<title>Marcador.do | Restablecer clave</title>
 
-			<link rel="stylesheet" type="text/css" href="style.css" />
+			<!--<link rel="stylesheet" type="text/css" href="style2.css" />-->
+
+			<!--[if (gte mso 9)|(IE)]>
+   				 <style type="text/css">
+       			 table {border-collapse: collapse;}
+    			</style>
+    		<![endif]-->
+
 		</head>
 
-		<body>
-			
-				<div class="container">
-					<div style="background-color:white!important" class="header">
-						<div class="logo">
-							<img src="assets/logo-marcador-rojo.png"/>
-							<p style="color:#484848">No seguimos las tendencias, las marcamos.</p>
-						</div>
+		<body style="background-color:#e0e0e0; padding:15px; margin:0px;max-width:700px; font-family:calibri">
 
-						<div class="header-titler">restablecer contraseña</div>
+			<center>
+					<!-- tabla de contenido -->
+					<!--[if (gte mso 9) | (IE)]>
+					<table width="600" align="center">
+						<tr>
+						<td>
+					<![endif]-->
+						<table width="auto" style="background-color:#fff; border-spacing:0;" class="outer" align="center" border="0" cellpadding="10px" >
+							<!-- titulo y logo -->
+							<tr>
+								<td class="logo" cellpadding="5px" colspan="3">
+									<img src="<?php echo get_templaste_directory_uri()?>assets/emails/assets/logo-marcador-rojo.png" width="250px" height="46px" alt="Marcador.do" border="0"/>
+									<!--contenido aquí-->
+								</td>
+							</tr>
 
-					</div>
-					<div class="grupo1">
-						<p class="texto">
-							Se ha requerido cambiar la contraseña de la cuenta <span style="color:red">@usuario</span>.
-							</p>
+							<!--barra roja -->
+							<tr style="background-color:#636363">
+								<td style="color:#fff" colspan="3"><center>RESTABLECER CONTRASEÑA</center></td>
+							</tr>
 
-						<p>Si este requerimiento no ha venido de tu parte, favor ignorar este correo. 
-						Este link será deshabilitado dentro de 24 horas.</p>
+							<!--mensaje @usuario one line -->
+							<tr>
+								<td  colspan="3">
+									<table align="left">
+										<tr>
+											<td>
+												<p style="margin:0px;"> Hemos recibido un requerimiento para cambiar la contraseña de la cuenta<span style="color:#e80303"><?php echo $username; ?></span></p>
+											</td>
+										</tr>
+									</table>
+								</td>
+							</tr>
 
-						<div class="btn_principal">
-							<button type="button">Reestablecer clave</button>
-							<p>Hacer click para actualizar la clave de tu cuenta.</p>
-						</div>
-					</div>
+							<tr>
+								<td colspan="3">Si este requerimiento no ha venido de tu parte, favor ignorar este correo y este link será deshabilitado dentro de 24 horas.</td>
+							</tr>
+							
+							
+							
 
+							<tr>
+								<td colspan="3" align="center"  width="auto">
+										<a target="_blank" href="<?php echo $link; ?>"><button style="font-size:16px;padding:10px 30px; color:white;background-color:#e80303;border:0px;border-radius:9px;">Restablecer contraseña</button></a>
+										<p style="font-size:12px; margin:0px">Haz clic para actualizar la clave de tu cuenta.</p>
+								</td>
+							</tr>
 
-					<div class="container-link">
-						<a href="#">Soporte para esta situación</a> 
-					</div>
+							<tr>
+								<td>
+								<!--columna 1-->
+									<table>
+										<tr>
+											<td style="font-size:12px">
+												<a href="<?php echo get_permalink(get_page_by_title('Políticas de Privacidad')); ?>">Declaración de privacidad</a>
+											</td>
+										</tr>
+									</table>
+								</td>
+							<td colspan="2">
 
-					<div class="container-redes">
-						<ul>
-							<li class="texto_redes"><img src="assets/emr_texto.png" /></li>
-							<li><a target="_blank" href="https://www.facebook.com/Marcador.do/"><img src="assets/emr_facebook.png" /></a>
-							<li><a target="_blank" href="https://twitter.com/marcador_do"><img src="assets/emr_twitter.png" /></a>
-							<li><a target="_blank" href="https://www.instagram.com/marcador.do/"><img src="assets/emr_instagram.png" /></a>
-						</ul>
-				</div>
-			</div>
-			<p class="footer-text">Has recibido este email porque está registrado en Marcador.do.
-			Por favor, no contestes directamente a este email.Si tienes cualquier pregunta o sugerencia, por favor visita nuestra página de ayuda.
-			Copyright (c) 2016 Marcador S.R.L. | Calle Rafael Augusto Sánchez #12</p>
+								<!--columna 1-->
+									<table align="right" cellpadding="3px">
+										<tr>
+											<td text-aling="right">
+												<img src="<?php echo get_templaste_directory_uri()?>assets/emails/assets/emr_texto.png" width="173px" height="18px" alt="Siguenos en las redes sociales" border="0px"/>
+											</td><td>
+												<a target="_blank" href="https://www.facebook.com/Marcador.do/"><img src="<?php echo get_templaste_directory_uri()?>assets/emails/assets/emr_facebook.png" width="20px" height="21px" alt="facebook" border="0px"/></a>
+											</td><td>
+												<a target="_blank" href="https://twitter.com/marcador_do"><img src="<?php echo get_templaste_directory_uri()?>assets/emails/assets/emr_twitter.png" width="20px" height="21px" alt="twitter" border="0px"/></a>
+											</td><td>
+												<a target="_blank" href="https://www.instagram.com/marcador.do/"><img src="<?php echo get_templaste_directory_uri()?>assets/emails/assets/emr_instagram.png" width="20px" height="21px" alt="instagram" border="0px"/></a>
+											</td>
+										</tr>
+									</table>
+								</td>
+							</tr>
 
+							<tr>
+								<td align="center" style="background-color:#e0e0e0" colspan="3">
+									<span style="font-size:12px;">Has recibido este email porque está registrado en Marcador.do. Por favor, no contestes directamente a este email. Si tienes cualquier pregunta o sugerencia, por favor visita nuestra página de ayuda. Copyright (c) 2016 Marcador S.R.L. | Calle Rafael Augusto Sánchez #12</span>
+								</td>
+							</tr>
+						</table>
+						<!-- [if (gte mso 9) | (IE)]>
+						</td>
+						</tr>
+						</table>
+						<![endif]-->			
+			</center>
 		</body>
 	</html>
